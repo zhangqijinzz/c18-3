@@ -4,7 +4,9 @@ import { LocalStorageService } from './features/brand-mirror/services/storageSer
 import { BrowserBrandGuidelinesExporter } from './features/brand-mirror/services/exportService'
 import { BrandMirrorViewModel } from './features/brand-mirror/viewmodels/brandMirrorViewModel'
 
-const viewModel = new BrandMirrorViewModel(new LocalBrandRepository(new LocalStorageService()), new BrowserBrandGuidelinesExporter())
+const storage = new LocalStorageService()
+const repository = new LocalBrandRepository(storage)
+const viewModel = new BrandMirrorViewModel(repository, new BrowserBrandGuidelinesExporter(), { storage })
 
 export default function App() {
   return <BrandMirrorPage viewModel={viewModel} />
