@@ -1,5 +1,7 @@
 export type BrandTheme = 'studio' | 'editorial' | 'night'
 export type MirrorStatus = 'loading' | 'ready' | 'editing' | 'error'
+export type SavePhase = 'idle' | 'pending' | 'saving' | 'saved' | 'error'
+export type WorkspaceRole = 'starting' | 'owner' | 'viewer'
 
 export interface BrandTokens {
   primary: string
@@ -33,6 +35,37 @@ export interface BrandMirrorSnapshot {
   contrastRatio: number
   contrastWarning: boolean
   message: string
+  savePhase: SavePhase
+  savedAt: number | null
+  role: WorkspaceRole
+  peerCount: number
+  ownerSessionId: string | null
+  /** 异常关闭后找回的未保存草稿，等待用户决定恢复还是丢弃 */
+  recovery: PendingRecovery | null
+  /** 与另一个页面的写入冲突，用户决定前冻结本页自动保存 */
+  conflict: WorkspaceConflict | null
+  /** 只读/降级等非阻断性提示，例如被另一个页面接管 */
+  notice: string | null
+}
+
+export interface PendingRecovery {
+  draftAt: number
+  committedAt: number | null
+  tokens: BrandTokens
+  theme: BrandTheme
+  versions: SavedVersion[]
+}
+
+export interface WorkspaceConflict {
+  localTokens: BrandTokens
+  localTheme: BrandTheme
+  localUpdatedAt: number
+  remoteTokens: BrandTokens
+  remoteTheme: BrandTheme
+  remoteUpdatedAt: number
+  remoteRevision: number
+  remoteSessionId: string
+  fromStartup: boolean
 }
 
 export const INITIAL_TOKENS: BrandTokens = {
